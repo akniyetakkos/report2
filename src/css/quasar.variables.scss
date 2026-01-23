@@ -1,25 +1,72 @@
-// Quasar SCSS (& Sass) Variables
-// --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+$primary   : #1976D2; 
+$secondary : #26A69A; 
+$accent    : #9C27B0; 
 
-// Check documentation for full list of Quasar variables
+$positive  : #21BA45; 
+$negative  : #C10015; 
+$info      : #31CCEC; 
+$warning   : #F2C037; 
+$dark      : #1D1D1D;
+$dark-page : #121212;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
+$typography-font-family: 'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
+$generic-border-radius: 4px;
+$button-border-radius: 8px;
+$card-border-radius: 12px;
+$shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+$shadow-2: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+$shadow-3: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+$shadow-4: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+$shadow-5: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+$space-base: 16px;
+$space-x-small: $space-base * 0.25;  
+$space-small: $space-base * 0.5;     
+$space-medium: $space-base;          
+$space-large: $space-base * 1.5;     
+$space-x-large: $space-base * 2;    
+$transition-duration: 300ms;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
-$primary: #1976d2;
-$secondary: #26a69a;
-$accent: #9c27b0;
+$button-padding: 8px 16px;
+$button-dense-padding: 4px 8px;
+$button-font-size: 14px;
+$button-font-weight: 500;
+$button-transition: background-color $transition-duration $transition-timing,
+                    color $transition-duration $transition-timing,
+                    box-shadow $transition-duration $transition-timing;
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+$card-padding: 16px;
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+$toolbar-min-height: 56px;
+$toolbar-padding: 0 16px;
+$input-font-size: 14px;
+$input-label-font-size: 12px;
+$dialog-border-radius: 16px;
+$chip-border-radius: 16px;
+$z-marginals: 2000;  
+$z-notify: 9500; 
+$z-fullscreen: 7000; 
+$z-menu: 6000;    
+$z-top: 5000; 
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card-shadow {
+  box-shadow: $shadow-2;
+  transition: box-shadow $transition-duration $transition-timing;
+  
+  &:hover {
+    box-shadow: $shadow-3;
+  }
+}
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
