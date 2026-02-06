@@ -15,7 +15,7 @@ export const useCheckInStore = defineStore('checkIn', () => {
   const canCheckOut = computed(() => status.value === 'checked_in')
   async function performCheckIn(latitude, longitude, locationName = 'Рабочая точка') {
     if (!canCheckIn.value) {
-      throw new Error('Вы уже зарегистрированы')
+      throw new Error('Вы уже зарегистрированы!')
     }
 
     loading.value = true

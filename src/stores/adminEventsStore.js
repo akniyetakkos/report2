@@ -8,7 +8,7 @@ export const useAdminEventsStore = defineStore('adminEvents', () => {
       employeeId: 101,
       employeeName: 'Иванов Иван',
       locationId: 1,
-      locationName: 'Офис Астана',
+      locationName: 'Офис  Астана',
       type: 'check_in',
       timestamp: '2025-01-23T08:30:00Z',
       lat: 51.1282,
@@ -28,7 +28,7 @@ export const useAdminEventsStore = defineStore('adminEvents', () => {
     {
       id: 3,
       employeeId: 101,
-      employeeName: 'Иванов Иван',
+      employeeName: 'Иванов Иванов',
       locationId: 1,
       locationName: 'Офис Астана',
       type: 'check_out',

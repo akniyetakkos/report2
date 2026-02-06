@@ -7,7 +7,7 @@
 
         <div v-if="accuracy" class="accuracy-badge">
             <q-chip dense color="info" text-color="white" icon="gps_fixed">
-                Точность: {{ Math.round(accuracy) }}м
+                Точность : {{ Math.round(accuracy) }}м
             </q-chip>
         </div>
     </div>

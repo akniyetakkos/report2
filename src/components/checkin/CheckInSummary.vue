@@ -41,7 +41,7 @@
                             <q-icon name="gps_fixed" color="primary" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label caption>Координаты</q-item-label>
+                            <q-item-label caption>Координаты:</q-item-label>
                             <q-item-label class="text-caption">
                                 {{ data.lat?.toFixed(6) }}, {{ data.lng?.toFixed(6) }}
                             </q-item-label>

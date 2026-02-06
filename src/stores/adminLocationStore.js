@@ -32,7 +32,7 @@ export const useAdminLocationStore = defineStore('adminLocation', () => {
       locations.value.push(response.data)
       return response.data
     } catch (err) {
-      error.value = err.message || 'Ошибка создания локации'
+      error.value = err.message || 'Ошибка при создания локации'
       throw err
     } finally {
       loading.value = false

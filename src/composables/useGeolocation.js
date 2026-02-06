@@ -33,7 +33,7 @@ export function useGeolocation() {
     switch(err.code) {
       case err.PERMISSION_DENIED:
         permissionDenied.value = true
-        error.value = 'Доступ к геолокации запрещён. Разрешите доступ в настройках браузера.'
+        error.value = 'Доступ к геолокации запрещён.Разрешите доступ в настройках браузера.'
         break
       case err.POSITION_UNAVAILABLE:
         error.value = 'Информация о местоположении недоступна.'

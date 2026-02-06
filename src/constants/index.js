@@ -48,7 +48,7 @@ export const TIMEOUTS = {
 }
 
 export const ERROR_MESSAGES = {
-  GEO_PERMISSION_DENIED: 'Доступ к геолокации запрещён. Разрешите доступ в настройках браузера.',
+  GEO_PERMISSION_DENIED: 'Доступ к геолокации запрещён. Разрешите доступ в настройках браузера',
   GEO_POSITION_UNAVAILABLE: 'Информация о местоположении недоступна.',
   GEO_TIMEOUT: 'Превышено время ожидания определения местоположения.',
   GEO_NOT_SUPPORTED: 'Ваш браузер не поддерживает геолокацию.',

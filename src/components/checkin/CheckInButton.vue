@@ -4,7 +4,7 @@
             <template v-slot:avatar>
                 <q-icon name="warning" />
             </template>
-            Вы находитесь вне рабочей зоны. Приблизьтесь к офису для регистрации.
+            Вы находитесь вне рабочей зоны Приблизьтесь к офису для регистрации.
         </q-banner>
 
         <q-banner v-if="!userPosition && !geoLoading" class="bg-negative text-white q-mb-md" dense>

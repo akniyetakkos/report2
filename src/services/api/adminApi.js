@@ -5,7 +5,7 @@ const initMockData = () => {
       {
         id: 1,
         name: 'Офис Астана',
-        address: 'Syganak street, 17/10, Astana, 010000, Kazakhstan',
+        address: 'Syganak street,17/10, Astana, 010000, Kazakhstan',
         lat: 51.091944,
         lng: 71.415556,
         radius: 100,

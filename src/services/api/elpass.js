@@ -10,7 +10,7 @@ export async function checkIn(data) {
   await delay()
 
   if (shouldFail()) {
-    throw new Error('Ошибка сети. Попробуйте еще раз.')
+    throw new Error('Ошибка сети.Попробуйте еще раз.')
   }
 
   if (mockDB.userStatus === 'checked_in') {

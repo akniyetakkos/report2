@@ -8,7 +8,7 @@
                             Рабочие точки
                             <q-btn flat round dense icon="add" color="primary" @click="openCreateDialog"
                                 class="float-right">
-                                <q-tooltip>Добавить точку</q-tooltip>
+                                <q-tooltip>Добавить точку на карте</q-tooltip>
                             </q-btn>
                         </div>
 
