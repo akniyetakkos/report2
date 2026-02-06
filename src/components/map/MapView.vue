@@ -44,7 +44,13 @@ L.Icon.Default.mergeOptions({
 
 onMounted(() => {
     initMap()
-    drawWorkLocations()
+    locationStore.fetchLocations()
+        .then(() => {
+            drawWorkLocations()
+        })
+        .catch((err) => {
+            console.error('Failed to load locations for map:', err)
+        })
 })
 
 onUnmounted(() => {
@@ -111,7 +117,13 @@ function drawWorkLocations() {
     locationCircles.forEach(c => c.remove())
     locationMarkers = []
     locationCircles = []
-    locationStore.activeLocations.forEach(location => {
+
+    const locations =
+        (locationStore.activeLocations && locationStore.activeLocations.value) ||
+        (locationStore.locations && locationStore.locations.value) ||
+        []
+
+    locations.forEach(location => {
         const position = [location.lat, location.lng]
 
         const circle = L.circle(position, {

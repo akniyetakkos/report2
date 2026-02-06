@@ -1,125 +1,145 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import {
+  fetchEmployeesFromSheet,
+  addEmployeeToSheet,
+  updateEmployeeInSheet,
+  deleteEmployeeFromSheet
+} from 'src/services/googleSheetsService'
 
 export const useEmployeesStore = defineStore('employees', () => {
   const employees = ref([
     {
       id: 101,
       name: 'Иванов Иван',
-      email: 'ivanov@example.kz',
-      phone: '+7 701 234 5678',
+      email: 'ivanov@example.com',
+      phone: '+7 700 111 2233',
       position: 'Менеджер',
-      assignedLocations: [1],
-      active: true,
-      createdAt: '2025-01-10T09:00:00Z'
+      assignedLocations: [1]
     },
     {
       id: 102,
       name: 'Петрова Мария',
-      email: 'petrova@example.kz',
-      phone: '+7 702 345 6789',
-      position: 'Специалист',
-      assignedLocations: [1],
-      active: true,
-      createdAt: '2025-01-12T10:30:00Z'
+      email: 'petrova@example.com',
+      phone: '+7 700 222 3344',
+      position: 'Бухгалтер',
+      assignedLocations: [1]
     },
     {
       id: 103,
       name: 'Сидоров Петр',
-      email: 'sidorov@example.kz',
-      phone: '+7 707 456 7890',
+      email: 'sidorov@example.com',
+      phone: '+7 700 333 4455',
       position: 'Кладовщик',
-      assignedLocations: [2],
-      active: true,
-      createdAt: '2025-01-15T11:00:00Z'
+      assignedLocations: [2]
     }
   ])
 
   const loading = ref(false)
   const error = ref(null)
 
+  function upsertLocal(employee) {
+    const idx = employees.value.findIndex((e) => e.id === employee.id)
+    if (idx === -1) {
+      employees.value.push(employee)
+    } else {
+      employees.value[idx] = employee
+    }
+  }
+
   async function fetchEmployees() {
     loading.value = true
     error.value = null
-    
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        loading.value = false
-        resolve(employees.value)
-      }, 500)
-    })
+
+    try {
+      const sheetEmployees = await fetchEmployeesFromSheet()
+      if (Array.isArray(sheetEmployees)) employees.value = sheetEmployees
+      return employees.value
+    } catch (err) {
+      // Если Google Sheets не настроен или упал — работаем на локальных мок‑данных
+      console.warn('Не удалось загрузить сотрудников из Google Sheets:', err)
+      error.value = err.message
+      return employees.value
+    } finally {
+      loading.value = false
+    }
   }
 
   async function createEmployee(employeeData) {
-    loading.value = true
-    error.value = null
+    const localEmployee = {
+      id: Date.now(),
+      ...employeeData
+    }
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          const newEmployee = {
-            id: Date.now(),
-            ...employeeData,
-            active: true,
-            createdAt: new Date().toISOString()
-          }
-          employees.value.push(newEmployee)
-          loading.value = false
-          resolve(newEmployee)
-        } catch (err) {
-          error.value = err.message
-          loading.value = false
-          reject(err)
-        }
-      }, 600)
-    })
+    try {
+      const created = await addEmployeeToSheet(localEmployee)
+      const finalEmployee = created || localEmployee
+      // Перечитываем из таблицы, чтобы сайт сразу совпадал с Google Sheets
+      try {
+        await fetchEmployees()
+      } catch {
+        upsertLocal(finalEmployee)
+      }
+      return finalEmployee
+    } catch (err) {
+      console.warn('Не удалось сохранить сотрудника в Google Sheets, сохраняем только локально:', err)
+      error.value = err.message
+      upsertLocal(localEmployee)
+      return localEmployee
+    }
   }
 
   async function updateEmployee(id, updates) {
-    loading.value = true
-    error.value = null
+    const index = employees.value.findIndex((e) => e.id === id)
+    if (index === -1) {
+      throw new Error('Сотрудник не найден')
+    }
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = employees.value.findIndex(emp => emp.id === id)
-        if (index !== -1) {
-          employees.value[index] = { 
-            ...employees.value[index], 
-            ...updates 
-          }
-          loading.value = false
-          resolve(employees.value[index])
-        } else {
-          error.value = 'Сотрудник не найден'
-          loading.value = false
-          reject(new Error('Сотрудник не найден'))
-        }
-      }, 500)
-    })
+    const updatedLocal = {
+      ...employees.value[index],
+      ...updates
+    }
+
+    try {
+      const updatedRemote = await updateEmployeeInSheet(id, updates)
+      const finalEmployee = updatedRemote || updatedLocal
+      employees.value[index] = finalEmployee
+      // Перечитываем из таблицы, чтобы изменения в Google Sheets сразу отражались на сайте
+      try {
+        await fetchEmployees()
+      } catch {
+        // ignore
+      }
+      return finalEmployee
+    } catch (err) {
+      console.warn('Не удалось обновить сотрудника в Google Sheets, обновляем только локально:', err)
+      error.value = err.message
+      employees.value[index] = updatedLocal
+      return updatedLocal
+    }
   }
 
   async function deleteEmployee(id) {
-    loading.value = true
-    error.value = null
+    const before = employees.value.length
+    employees.value = employees.value.filter((e) => e.id !== id)
+    if (employees.value.length === before) {
+      throw new Error('Сотрудник не найден')
+    }
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const index = employees.value.findIndex(emp => emp.id === id)
-        if (index !== -1) {
-          employees.value.splice(index, 1)
-          loading.value = false
-          resolve(true)
-        } else {
-          error.value = 'Сотрудник не найден'
-          loading.value = false
-          reject(new Error('Сотрудник не найден'))
-        }
-      }, 500)
-    })
-  }
-
-  function getEmployeeById(id) {
-    return employees.value.find(emp => emp.id === id)
+    try {
+      await deleteEmployeeFromSheet(id)
+      // Перечитываем, чтобы синхронизировать с таблицей
+      try {
+        await fetchEmployees()
+      } catch {
+        // ignore
+      }
+      return true
+    } catch (err) {
+      console.warn('Не удалось удалить сотрудника из Google Sheets, удалён только локально:', err)
+      error.value = err.message
+      return true
+    }
   }
 
   return {
@@ -129,7 +149,8 @@ export const useEmployeesStore = defineStore('employees', () => {
     fetchEmployees,
     createEmployee,
     updateEmployee,
-    deleteEmployee,
-    getEmployeeById
+    deleteEmployee
   }
 })
+
+

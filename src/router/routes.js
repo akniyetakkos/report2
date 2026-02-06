@@ -43,6 +43,11 @@ const routes = [
         component: () => import('pages/admin/EventsPage.vue')
       },
       {
+        path: 'events/:id',
+        name: 'admin-event-details',
+        component: () => import('pages/admin/EventDetailsPage.vue')
+      },
+      {
         path: 'employees',
         name: 'admin-employees',
         component: () => import('pages/admin/EmployeesPage.vue')
@@ -51,7 +56,8 @@ const routes = [
         path: 'settings',
         name: 'admin-settings',
         component: () => import('pages/admin/SettingsPage.vue')
-      }
+      },
+      
     ]
   },
 

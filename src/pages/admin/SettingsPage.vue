@@ -1,8 +1,10 @@
 <template>
     <q-page padding>
-        <div class="text-h5 q-mb-lg">Настройки системы</div>
+        <div class="text-h5 q-mb-sm">Настройки</div>
+        <div class="text-caption text-grey-7 q-mb-lg">Управляйте профилем, расписанием и уведомлениями</div>
 
         <div class="row q-col-gutter-md">
+            <!-- Общие настройки - СОХРАНЯЕМ ПОЛНОСТЬЮ -->
             <div class="col-12 col-md-6">
                 <q-card>
                     <q-card-section>
@@ -35,133 +37,132 @@
                 </q-card>
             </div>
 
+            <!-- Общие настройки (профиль) - КАК НА ФОТО -->
             <div class="col-12 col-md-6">
                 <q-card>
                     <q-card-section>
-                        <div class="text-h6 q-mb-md">
-                            <q-icon name="schedule" class="q-mr-sm" />
-                            Рабочее расписание
-                        </div>
+                        <div class="text-h6 q-mb-sm">Общие настройки</div>
+                        <div class="text-caption text-grey-7 q-mb-md">Информация о вашем профиле</div>
 
-                        <q-list>
-                            <q-item v-for="(day, index) in workSchedule" :key="index">
-                                <q-item-section>
-                                    <q-checkbox v-model="day.enabled" :label="day.name" color="primary" />
-                                </q-item-section>
-
-                                <q-item-section v-if="day.enabled">
-                                    <div class="row q-col-gutter-sm">
-                                        <div class="col-6">
-                                            <q-input v-model="day.startTime" type="time" dense outlined
-                                                label="Начало" />
-                                        </div>
-                                        <div class="col-6">
-                                            <q-input v-model="day.endTime" type="time" dense outlined label="Конец" />
-                                        </div>
-                                    </div>
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-card-section>
-                </q-card>
-            </div>
-
-            <div class="col-12 col-md-6">
-                <q-card>
-                    <q-card-section>
-                        <div class="text-h6 q-mb-md">
-                            <q-icon name="notifications" class="q-mr-sm" />
-                            Уведомления
-                        </div>
-
-                        <q-list>
-                            <q-item>
-                                <q-item-section>
-                                    <q-toggle v-model="notifications.emailOnCheckIn" label="Email при входе"
-                                        color="primary" />
-                                </q-item-section>
-                            </q-item>
-
-                            <q-item>
-                                <q-item-section>
-                                    <q-toggle v-model="notifications.emailOnCheckOut" label="Email при выходе"
-                                        color="primary" />
-                                </q-item-section>
-                            </q-item>
-
-                            <q-item>
-                                <q-item-section>
-                                    <q-toggle v-model="notifications.emailOnLateArrival" label="Email при опоздании"
-                                        color="primary" />
-                                </q-item-section>
-                            </q-item>
-
-                            <q-item>
-                                <q-item-section>
-                                    <q-toggle v-model="notifications.pushNotifications" label="Push уведомления"
-                                        color="primary" />
-                                </q-item-section>
-                            </q-item>
-
-                            <q-item v-if="notifications.emailOnLateArrival">
-                                <q-item-section>
-                                    <q-input v-model.number="notifications.lateArrivalThreshold"
-                                        label="Порог опоздания (минуты)" type="number" outlined dense />
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-card-section>
-                </q-card>
-            </div>
-
-            <div class="col-12 col-md-6">
-                <q-card>
-                    <q-card-section>
-                        <div class="text-h6 q-mb-md">
-                            <q-icon name="sync" class="q-mr-sm" />
-                            Интеграция с Elpass
-                        </div>
-
-                        <q-form class="q-gutter-md">
-                            <q-input v-model="integration.apiUrl" label="API URL" outlined
-                                hint="URL эндпоинта Elpass Time Tracking" />
-
-                            <q-input v-model="integration.apiKey" label="API Key" type="password" outlined
-                                hint="Ключ для авторизации">
-                                <template v-slot:append>
-                                    <q-icon name="visibility_off" class="cursor-pointer" />
-                                </template>
-                            </q-input>
-
-                            <q-input v-model.number="integration.syncInterval" label="Интервал синхронизации (минуты)"
-                                type="number" outlined hint="Как часто синхронизировать данные с Elpass" />
-
-                            <q-toggle v-model="integration.autoSync" label="Автоматическая синхронизация"
-                                color="primary" />
-
-                            <div class="row q-col-gutter-sm">
-                                <div class="col-auto">
-                                    <q-btn outline color="primary" icon="sync" label="Тест подключения"
-                                        @click="testConnection" />
-                                </div>
-                                <div class="col-auto">
-                                    <q-btn outline color="primary" icon="cloud_upload" label="Синхронизировать сейчас"
-                                        @click="syncNow" />
+                        <div class="row items-center q-mb-lg">
+                            <div class="col-auto q-mr-md">
+                                <q-avatar size="80px">
+                                    <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                                </q-avatar>
+                            </div>
+                            <div class="col">
+                                <div class="text-subtitle1 text-weight-medium q-mb-xs">Аватар профиля</div>
+                                <div class="q-gutter-sm">
+                                    <q-btn outline color="primary" label="Загрузить фото" size="sm" />
+                                    <q-btn outline color="negative" label="Удалить" size="sm" />
                                 </div>
                             </div>
-                        </q-form>
+                        </div>
+
+                        <q-input v-model="profile.userName" label="Имя пользователя" outlined dense class="q-mb-md" />
+                        <q-input v-model="profile.email" label="Электронная почта" outlined dense class="q-mb-md" />
+                        <q-select v-model="profile.timezone" :options="timezoneOptions" label="Часовой пояс" outlined
+                            dense />
+                    </q-card-section>
+                </q-card>
+            </div>
+
+            <!-- Рабочее расписание - КАК НА ФОТО -->
+            <div class="col-12">
+                <q-card>
+                    <q-card-section>
+                        <div class="text-h6 q-mb-sm">Рабочее расписание</div>
+                        <div class="text-caption text-grey-7 q-mb-md">Установите часы доступности для встреч</div>
+
+                        <div class="schedule-list">
+                            <div v-for="(day, index) in workSchedule" :key="index"
+                                class="schedule-item row items-center q-py-sm">
+                                <div class="col-3">
+                                    <q-toggle v-model="day.enabled" :label="day.name" color="primary" />
+                                </div>
+
+                                <div class="col-9 row items-center justify-end" v-if="day.enabled">
+                                    <div class="text-body2">{{ day.startTime }}</div>
+                                    <div class="text-grey-7 q-mx-md">—</div>
+                                    <div class="text-body2">{{ day.endTime }}</div>
+                                </div>
+
+                                <div class="col-9 text-right" v-else>
+                                    <div class="text-grey-5">Недоступно</div>
+                                </div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </div>
+
+            <!-- Уведомления - КАК НА ФОТО -->
+            <div class="col-12">
+                <q-card>
+                    <q-card-section>
+                        <div class="text-h6 q-mb-sm">Уведомления</div>
+                        <div class="text-caption text-grey-7 q-mb-md">Настройте каналы связи</div>
+
+                        <div class="notifications-list">
+                            <div class="notification-item row items-center q-py-md">
+                                <div class="col">
+                                    <div class="text-subtitle2 q-mb-xs">Новые задачи</div>
+                                    <div class="text-caption text-grey-7">Уведомления о назначении новых задач</div>
+                                </div>
+                                <div class="col-auto">
+                                    <q-toggle v-model="notifications.newTasks" color="primary" />
+                                </div>
+                            </div>
+
+                            <q-separator />
+
+                            <div class="notification-item row items-center q-py-md">
+                                <div class="col">
+                                    <div class="text-subtitle2 q-mb-xs">Комментарии</div>
+                                    <div class="text-caption text-grey-7">Ответы и упоминания в комментариях</div>
+                                </div>
+                                <div class="col-auto">
+                                    <q-toggle v-model="notifications.comments" color="primary" />
+                                </div>
+                            </div>
+
+                            <q-separator />
+
+                            <div class="notification-item row items-center q-py-md">
+                                <div class="col">
+                                    <div class="text-subtitle2 q-mb-xs">Новости продукта</div>
+                                    <div class="text-caption text-grey-7">Обновления системы и новые функции</div>
+                                </div>
+                                <div class="col-auto">
+                                    <q-toggle v-model="notifications.productNews" color="primary" />
+                                </div>
+                            </div>
+
+                            <q-separator />
+
+                            <div class="notification-item row items-center q-py-md">
+                                <div class="col">
+                                    <div class="text-subtitle2 q-mb-xs">Безопасность</div>
+                                    <div class="text-caption text-grey-7">Входы с новых устройств</div>
+                                </div>
+                                <div class="col-auto">
+                                    <q-toggle v-model="notifications.security" color="primary" />
+                                </div>
+                            </div>
+                        </div>
                     </q-card-section>
                 </q-card>
             </div>
         </div>
 
-        <div class="row q-col-gutter-sm q-mt-md justify-end">
+        <!-- Кнопки внизу - КАК НА ФОТО -->
+        <div class="row q-col-gutter-sm q-mt-lg justify-end">
             <div class="col-auto">
-                <q-btn outline color="grey-7" label="Сбросить" @click="resetSettings" />
+                <q-btn outline color="grey-7" label="Отменить" @click="cancelChanges" padding="8px 24px" />
             </div>
             <div class="col-auto">
-                <q-btn unelevated color="primary" icon="save" label="Сохранить настройки" @click="saveSettings"
-                    :loading="saving" />
+                <q-btn unelevated color="primary" label="Сохранить изменения" @click="saveSettings" :loading="saving"
+                    padding="8px 24px" />
             </div>
         </div>
     </q-page>
@@ -174,6 +175,7 @@ import { useQuasar } from 'quasar'
 const $q = useQuasar()
 const saving = ref(false)
 
+// Общие настройки (системные) - СОХРАНЯЕМ
 const settings = reactive({
     defaultRadius: 100,
     gracePeriod: 5,
@@ -182,28 +184,36 @@ const settings = reactive({
     allowOfflineMode: false
 })
 
+// Профиль пользователя
+const profile = reactive({
+    userName: 'Александр Волков',
+    email: 'alex.volkov@example.com',
+    timezone: '(GMT+03:00) Москва'
+})
+
+const timezoneOptions = [
+    '(GMT+03:00) Москва',
+    '(GMT+05:00) Алматы',
+    '(GMT+06:00) Астана'
+]
+
+// Рабочее расписание - как на фото
 const workSchedule = reactive([
     { name: 'Понедельник', enabled: true, startTime: '09:00', endTime: '18:00' },
     { name: 'Вторник', enabled: true, startTime: '09:00', endTime: '18:00' },
     { name: 'Среда', enabled: true, startTime: '09:00', endTime: '18:00' },
     { name: 'Четверг', enabled: true, startTime: '09:00', endTime: '18:00' },
-    { name: 'Пятница', enabled: true, startTime: '09:00', endTime: '18:00' },
+    { name: 'Пятница', enabled: true, startTime: '09:00', endTime: '17:00' },
     { name: 'Суббота', enabled: false, startTime: '09:00', endTime: '14:00' },
     { name: 'Воскресенье', enabled: false, startTime: '09:00', endTime: '14:00' }
 ])
-const notifications = reactive({
-    emailOnCheckIn: true,
-    emailOnCheckOut: true,
-    emailOnLateArrival: true,
-    lateArrivalThreshold: 15,
-    pushNotifications: true
-})
 
-const integration = reactive({
-    apiUrl: 'https://elpass.example.kz/api/v1/time-tracking',
-    apiKey: '',
-    syncInterval: 15,
-    autoSync: true
+// Уведомления - как на фото
+const notifications = reactive({
+    newTasks: true,
+    comments: true,
+    productNews: true,
+    security: true
 })
 
 const saveSettings = async () => {
@@ -212,9 +222,9 @@ const saveSettings = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000))
     localStorage.setItem('app_settings', JSON.stringify({
         settings,
+        profile,
         workSchedule,
-        notifications,
-        integration
+        notifications
     }))
 
     saving.value = false
@@ -226,64 +236,12 @@ const saveSettings = async () => {
     })
 }
 
-const resetSettings = () => {
-    $q.dialog({
-        title: 'Подтверждение',
-        message: 'Вы уверены, что хотите сбросить все настройки на значения по умолчанию?',
-        cancel: true,
-        persistent: true
-    }).onOk(() => {
-        settings.defaultRadius = 100
-        settings.gracePeriod = 5
-        settings.locationUpdateInterval = 30
-        settings.requireHighAccuracy = true
-        settings.allowOfflineMode = false
-
-        workSchedule.forEach((day, index) => {
-            day.enabled = index < 5
-            day.startTime = '09:00'
-            day.endTime = index < 5 ? '18:00' : '14:00'
-        })
-
-        notifications.emailOnCheckIn = true
-        notifications.emailOnCheckOut = true
-        notifications.emailOnLateArrival = true
-        notifications.lateArrivalThreshold = 15
-        notifications.pushNotifications = true
-
-        $q.notify({
-            type: 'info',
-            message: 'Настройки сброшены на значения по умолчанию',
-            position: 'top'
-        })
-    })
-}
-
-const testConnection = async () => {
-    $q.loading.show({ message: 'Проверка подключения...' })
-
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    $q.loading.hide()
-
+const cancelChanges = () => {
+    loadSettings()
     $q.notify({
-        type: 'positive',
-        message: 'Подключение к Elpass API успешно установлено',
+        type: 'info',
+        message: 'Изменения отменены',
         position: 'top'
-    })
-}
-
-const syncNow = async () => {
-    $q.loading.show({ message: 'Синхронизация данных...' })
-    await new Promise(resolve => setTimeout(resolve, 3000))
-
-    $q.loading.hide()
-
-    $q.notify({
-        type: 'positive',
-        message: 'Данные успешно синхронизированы с Elpass',
-        position: 'top',
-        caption: 'Синхронизировано событий: 42'
     })
 }
 
@@ -293,9 +251,9 @@ const loadSettings = () => {
         try {
             const data = JSON.parse(saved)
             Object.assign(settings, data.settings || {})
+            Object.assign(profile, data.profile || {})
             Object.assign(workSchedule, data.workSchedule || [])
             Object.assign(notifications, data.notifications || {})
-            Object.assign(integration, data.integration || {})
         } catch (e) {
             console.error('Ошибка загрузки настроек:', e)
         }
@@ -304,3 +262,17 @@ const loadSettings = () => {
 
 loadSettings()
 </script>
+
+<style scoped>
+.schedule-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.schedule-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item {
+    min-height: 60px;
+}
+</style>

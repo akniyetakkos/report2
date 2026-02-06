@@ -74,6 +74,14 @@ export default defineConfig((/* ctx */) => {
     devServer: {
       // https: true,
       open: true, // opens browser window automatically
+      proxy: {
+        // Проксируем вызовы к локальному backend (Node/Express),
+        // который уже ходит к Google Apps Script и добавляет свои CORS заголовки.
+        '/api/google-sheets': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

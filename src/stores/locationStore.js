@@ -1,84 +1,80 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import api from 'src/services/api/adminApi'
 
 export const useLocationStore = defineStore('location', () => {
-  const workLocations = ref([
-    {
-      id: 1,
-      name: 'Офис - Главный',
-      address: 'Syganak street, 17/10, Astana, 010000, Kazakhstan',
-      lat: 51.091944,
-      lng: 71.415556,
-      radius: 100, 
-      active: true
-    },
-  ])
-
-
-  const activeLocations = computed(() => 
-    workLocations.value.filter(loc => loc.active)
+  const locations = ref([])
+  const loading = ref(false)
+  const error = ref(null)
+  const activeLocations = computed(() =>
+    locations.value.filter((loc) => loc.active !== false)
   )
 
-  function isWithinRadius(userLat, userLng, location) {
-    const R = 6371e3 
-    const φ1 = userLat * Math.PI / 180
-    const φ2 = location.lat * Math.PI / 180
-    const Δφ = (location.lat - userLat) * Math.PI / 180
-    const Δλ = (location.lng - userLng) * Math.PI / 180
+  async function fetchLocations() {
+    loading.value = true
+    error.value = null
 
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    const distance = R * c
-
-    return distance <= location.radius
-  }
-
-  function findNearestLocation(userLat, userLng) {
-    const nearby = activeLocations.value.filter(location => 
-      isWithinRadius(userLat, userLng, location)
-    )
-
-    if (nearby.length === 0) return null
-
-    return nearby.reduce((nearest, location) => {
-      const dist = getDistance(userLat, userLng, location.lat, location.lng)
-      const nearestDist = getDistance(userLat, userLng, nearest.lat, nearest.lng)
-      return dist < nearestDist ? location : nearest
-    })
+    try {
+      const response = await api.get('/locations')
+      locations.value = response.data || []
+      return locations.value
+    } catch (err) {
+      error.value = err.message || 'Ошибка загрузки локаций'
+      throw err
+    } finally {
+      loading.value = false
+    }
   }
 
   function getDistance(lat1, lng1, lat2, lng2) {
-    const R = 6371e3
-    const φ1 = lat1 * Math.PI / 180
-    const φ2 = lat2 * Math.PI / 180
-    const Δφ = (lat2 - lat1) * Math.PI / 180
-    const Δλ = (lng2 - lng1) * Math.PI / 180
+    const R = 6371000 // радиус Земли в метрах
+    const toRad = (value) => (value * Math.PI) / 180
 
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-              Math.cos(φ1) * Math.cos(φ2) *
-              Math.sin(Δλ / 2) * Math.sin(Δλ / 2)
+    const dLat = toRad(lat2 - lat1)
+    const dLng = toRad(lng2 - lng1)
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2)
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    return R * c
+
+    return Math.round(R * c)
   }
 
-  function addLocation(location) {
-    const newLocation = {
-      id: Date.now(),
-      ...location,
-      active: true
-    }
-    workLocations.value.push(newLocation)
-    return newLocation
+  function findNearestLocation(lat, lng) {
+    if (!activeLocations.value.length) return null
+
+    let nearest = null
+    let minDistance = Infinity
+
+    activeLocations.value.forEach((location) => {
+      const distance = getDistance(lat, lng, location.lat, location.lng)
+
+      if (distance <= (location.radius || 0) && distance < minDistance) {
+        minDistance = distance
+        nearest = {
+          ...location,
+          distance
+        }
+      }
+    })
+
+    return nearest
   }
 
   return {
-    workLocations,
+    locations,
     activeLocations,
-    isWithinRadius,
-    findNearestLocation,
+    loading,
+    error,
+    fetchLocations,
     getDistance,
-    addLocation
+    findNearestLocation
   }
 })
+
+

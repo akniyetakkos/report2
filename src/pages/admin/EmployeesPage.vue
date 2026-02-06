@@ -7,10 +7,21 @@
                         <div class="text-h6">Сотрудники</div>
                     </div>
                     <div class="col-auto">
+                        <q-btn flat round dense icon="refresh" class="q-mr-sm" @click="refreshData"
+                            :loading="employeesStore.loading">
+                            <q-tooltip>Обновить из Google Sheets</q-tooltip>
+                        </q-btn>
                         <q-btn unelevated color="primary" icon="add" label="Добавить сотрудника"
                             @click="openCreateDialog" />
                     </div>
                 </div>
+
+                <q-banner v-if="employeesStore.error" class="bg-warning text-white q-mb-md" dense rounded>
+                    <template v-slot:avatar>
+                        <q-icon name="warning" />
+                    </template>
+                    {{ employeesStore.error }}
+                </q-banner>
                 <q-table :rows="employeesStore.employees" :columns="columns" row-key="id"
                     :loading="employeesStore.loading" :pagination="pagination" flat bordered>
                     <template v-slot:body-cell-status="props">
@@ -348,11 +359,15 @@ const viewHistory = (employee) => {
     showHistoryDialog.value = true
 }
 
-onMounted(async () => {
+const refreshData = async () => {
     await Promise.all([
         employeesStore.fetchEmployees(),
         locationStore.fetchLocations(),
         eventsStore.fetchEvents()
     ])
+}
+
+onMounted(async () => {
+    await refreshData()
 })
 </script>
